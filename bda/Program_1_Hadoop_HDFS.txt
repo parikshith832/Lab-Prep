@@ -1,0 +1,61 @@
+<configuration>
+    <property>
+        <name>fs.default.name</name>
+        <value>hdfs://localhost:9000</value>
+    </property>
+</configuration>
+
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+</configuration>
+
+<configuration>
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.auxservices.mapreduce.shuffle</name>
+        <value>or.apache.hadoop.mapred.shufflehandler</value>
+    </property>
+</configuration>
+
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>C:/hadoop-3.4.1/data/namenode</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>C:/hadoop-3.4.1/data/datanode</value>
+    </property>
+    <property>
+        <name>dfs.datanode.du.reserved</name>
+        <value>1073741824</value>
+    </property>
+</configuration>
+
+set JAVA_HOME=C:\Java\jdk1.8.0_202
+set JAVA_BIN=%JAVA_HOME%\bin
+set HADOOP_HOME=C:\hadoop-3.4.1
+set HADOOP_BIN=%HADOOP_HOME%\bin
+set HADOOP_CONF_DIR=C:\hadoop-3.4.1\etc\hadoop
+
+hadoop fs -mkdir /Directory1
+hadoop fs -ls /Directory1
+hadoop fs -put D:\Nakka.txt /Directory1
+hadoop fs -get /Directory1 D:\Nakka.txt\Directory1
+hadoop fs -cat /Directory1/Nakka.txt
+hadoop fs -mkdir /Directory2
+hadoop fs -mkdir /Directory3
+hadoop fs -cp /Directory1/Nakka.txt /Directory2
+hadoop fs -rm /Directory2/Nakka.txt
+hadoop fs -du /Directory1
+hadoop fs -rm -r /Directory3

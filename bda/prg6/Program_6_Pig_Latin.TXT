@@ -1,0 +1,44 @@
+employees = LOAD 'hdfs://localhost:9000/user/cloudera/employees.txt'
+USING PigStorage(',')
+AS (emp_id:int, name:chararray, age:int, dept_id:int, salary:int);
+
+departments = LOAD 'hdfs://localhost:9000/user/cloudera/departments.txt'
+USING PigStorage(',')
+AS (dept_id:int, dept_name:chararray);
+
+filtered_employees = FILTER employees BY age > 28;
+projected_employees = FOREACH filtered_employees GENERATE emp_id, name, salary;
+sorted_employees = ORDER projected_employees BY salary DESC;
+grouped_by_department = GROUP employees BY dept_id;
+joined_data = JOIN employees BY dept_id, departments BY dept_id;
+
+STORE sorted_employees INTO
+'hdfs://localhost:9000/user/cloudera/output/sorted_employees'
+USING PigStorage(',');
+
+STORE grouped_by_department INTO
+'hdfs://localhost:9000/user/cloudera/output/grouped_by_department'
+USING PigStorage(',');
+
+STORE joined_data INTO
+'hdfs://localhost:9000/user/cloudera/output/joined_data'
+USING PigStorage(',');
+
+DUMP sorted_employees;
+DUMP grouped_by_department;
+DUMP joined_data;
+
+********************************
+console
+********************************
+Upload the data in HDFS 
+hdfs dfs -mkdir -p /user/cloudera 
+hdfs dfs -put employees.txt /user/cloudera/ hdfs dfs -put departments.txt 
+/user/cloudera/ 
+Run the Script 
+pig -x mapreduce employee_analysis.pig  
+ouput commands 
+hdfs dfs -cat /user/cloudera/output/sorted_employees/part-r-00000 
+hdfs dfs -cat /user/cloudera/output/grouped_by_department/part-r-00000 hdfs dfs -cat /user/cloudera/output/joined_data/part-r-00000 
+
+********************************
