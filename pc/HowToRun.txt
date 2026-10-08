@@ -1,0 +1,9 @@
+filename-5:
+Create: gedit filename.c
+Compile: gcc -fopenmp filename.c -o filename
+Run: export OMP_NUM_THREADS=4 && ./filename
+
+prg6-9:
+Create: gedit filename.c
+Compile: mpicc filename.c -o filename
+Run: mpirun -np 4 ./filename
