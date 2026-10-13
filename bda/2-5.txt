@@ -1,0 +1,159 @@
+2
+
+def mapper(A, B):
+    pairs = {}
+    for i in range(len(A)):
+        for j in range(len(B[0])):
+            for k in range(len(B)):
+                pairs.setdefault((i, j), []).append(A[i][k] * B[k][j])
+    return pairs
+
+def reducer(values):
+    return sum(values)
+
+A = [[1, 2, 3], [4, 5, 6]]
+B = [[7, 8], [9, 10], [11, 12]]
+
+pairs = mapper(A, B)
+result = [[reducer(pairs[(i, j)]) for j in range(len(B[0]))]
+          for i in range(len(A))]
+
+for row in result:
+    print(row)
+
+3
+
+# Step 1: Create sample weather file
+with open('weather.txt', 'w') as f:
+    f.write("""2024-04-01,Sunny
+2024-04-01,Rainy
+2024-04-01,Sunny
+2024-04-02,Cloudy
+2024-04-02,Cloudy
+2024-04-02,Rainy
+2024-04-03,Sunny
+""")
+
+print("Weather file created.")
+
+# Step 2: Mapper function
+def mapper(line):
+    date, condition = line.strip().split(',')
+    return date, condition
+
+# Step 3: Reducer function
+def reducer(conditions):
+    counts = {}
+    for condition in conditions:
+        if condition in counts:
+            counts[condition] += 1
+        else:
+            counts[condition] = 1
+
+    return max(counts, key=counts.get)
+
+# Step 4: Main function
+def main(input_file):
+    with open(input_file, 'r') as f:
+        lines = f.readlines()
+
+    grouped = {}
+
+    # Map and group weather conditions by date
+    for line in lines:
+        date, condition = mapper(line)
+        if date not in grouped:
+            grouped[date] = []
+        grouped[date].append(condition)
+
+    # Reduce and display the most frequent condition
+    for date, conditions in grouped.items():
+        print("Weather on", date, ":", reducer(conditions))
+
+# Step 5: Execute program
+main('weather.txt')
+
+4
+
+import csv
+
+# Step 1: Create sample CSV files
+def create_sample_files():
+    with open('movies.csv', 'w', newline='') as f:
+        w = csv.writer(f)
+        w.writerows([
+            ['movieId', 'title'],
+            ['1', 'Toy Story'],
+            ['2', 'Jumanji'],
+            ['3', 'Grumpier Old Men']
+        ])
+
+    with open('tags.csv', 'w', newline='') as f:
+        w = csv.writer(f)
+        w.writerows([
+            ['userId', 'movieId', 'tag', 'timestamp'],
+            ['10', '1', 'funny', '1234567890'],
+            ['11', '1', 'animation', '1234567891'],
+            ['12', '2', 'adventure', '1234567892'],
+            ['13', '2', 'game', '1234567893'],
+            ['14', '1', 'funny', '1234567894'],
+            ['15', '3', 'romantic', '1234567895']
+        ])
+
+# Step 2: Mapper
+def mapper(tags):
+    pairs = []
+    for row in tags:
+        pairs.append((row['movieId'], row['tag']))
+    return pairs
+
+# Step 3: Reducer and MapReduce
+def map_reduce(tags):
+    grouped = {}
+    for key, value in mapper(tags):
+        if key not in grouped:
+            grouped[key] = []
+        grouped[key].append(value)
+
+    result = {}
+    for key, values in grouped.items():
+        result[key] = list(set(values))
+    return result
+
+# Step 4: Load CSV data
+def load_data(file, key, value):
+    with open(file, 'r') as f:
+        return {row[key]: row[value] for row in csv.DictReader(f)}
+
+def load_tags(file):
+    with open(file, 'r') as f:
+        return list(csv.DictReader(f))
+
+# Step 5: Execute
+create_sample_files()
+tags = load_tags('tags.csv')
+movies = load_data('movies.csv', 'movieId', 'title')
+result = map_reduce(tags)
+
+for movie_id, tag_list in result.items():
+    print(f"Movie: {movies.get(movie_id, 'Unknown')}, Tags: {', '.join(tag_list)}")
+
+5
+
+mongosh
+use experimentFiva
+db.createCollection("myCollection")
+
+for (let i = 0; i < 10000; i++) {
+    db.myCollection.insertOne({
+        name: "Person" + i,
+        age: Math.floor(Math.random() * 100),
+        city: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"][Math.floor(Math.random() * 5)]
+    });
+}
+
+db.myCollection.countDocuments({})
+db.myCollection.find().skip(9999)
+db.myCollection.find().limit(2)
+db.myCollection.find({age: 0})
+db.myCollection.find({age: {$gt: 99}})
